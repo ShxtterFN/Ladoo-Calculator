@@ -2,64 +2,340 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Ladoo Recipe Scaler</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Murtis Kitchen Recipe Calculator</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 30px; background-color: #f9f9f9; text-align: center; }
-        .calculator { max-width: 400px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        input { width: 80%; padding: 10px; font-size: 18px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; text-align: center; }
-        h2 { color: #d35400; }
-        .ingredients { text-align: left; margin-top: 20px; font-size: 18px; line-height: 2; }
+        * { box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            background-color: #1a1a1a;
+            transition: background 0.5s ease;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* Top Navigation Bar Tabs */
+        .tab-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 8px;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            max-width: 520px;
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px 12px;
+            border: none;
+            background: transparent;
+            color: #ccc;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .tab-btn.active {
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .hub-container { 
+            width: 100%;
+            max-width: 480px; 
+            background: rgba(255, 255, 255, 0.95); 
+            padding: 30px 24px; 
+            border-radius: 24px; 
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4); 
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .hub-container.calc-mode {
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(25px) brightness(0.6);
+            -webkit-backdrop-filter: blur(25px) brightness(0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .logo-banner {
+            width: 100%;
+            height: auto;
+            border-radius: 14px;
+            margin-bottom: 25px;
+            display: block;
+        }
+        
+        .menu-btn { 
+            display: block; 
+            width: 100%; 
+            padding: 16px; 
+            margin: 12px 0; 
+            font-size: 18px; 
+            font-weight: 700; 
+            color: white; 
+            border: none; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            transition: transform 0.2s; 
+        }
+        .menu-btn:active { transform: scale(0.98); }
+        .ladoo-btn { background: #d97706; }
+        .papdi-btn { background: #059669; }
+        .mohanthal-btn { background: #b45309; }
+        
+        .view { display: none; }
+        .view.active { display: block; }
+        
+        h2 { 
+            font-size: 26px;
+            font-weight: 800;
+            margin: 0 0 20px 0; 
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+        }
+        .ladoo-title { color: #f59e0b; }
+        .papdi-title { color: #34d399; }
+        .mohanthal-title { color: #fbbf24; }
+
+        .section-header {
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 20px 0 8px 0;
+            color: rgba(255, 255, 255, 0.7);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 4px;
+        }
+
+        input { 
+            width: 100%; 
+            padding: 14px; 
+            font-size: 22px; 
+            font-weight: 700;
+            margin-bottom: 15px; 
+            border-radius: 12px; 
+            border: none; 
+            text-align: center; 
+            background: rgba(255, 255, 255, 0.95);
+            color: #111;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        input:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
+        
+        .ingredients { 
+            text-align: left; 
+            font-size: 18px; 
+            padding: 0 5px; 
+        }
+        .ing-item { 
+            display: flex; 
+            justify-content: space-between; 
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.25); 
+            padding: 10px 0; 
+            font-weight: 600;
+        }
+        
+        .unit { 
+            opacity: 0.8;
+            font-size: 16px; 
+            font-weight: 400;
+        }
+        .val {
+            font-weight: 800;
+            margin-left: auto;
+            margin-right: 8px;
+        }
     </style>
 </head>
 <body>
 
-<div class="calculator">
-    <h2>Ladoo Calculator</h2>
-    <p>Enter the number of ladoos you want to make:</p>
-    
-    <!-- This is the interactive "tab" box you can change -->
-    <input type="number" id="ladooCount" value="1" min="1" oninput="updateRecipe()">
+<!-- TOP NAVIGATION TABS -->
+<div class="tab-bar">
+    <button class="tab-btn active" id="tab-menuView" onclick="switchView('menuView')">Home</button>
+    <button class="tab-btn" id="tab-ladooView" onclick="switchView('ladooView')">Ladoo</button>
+    <button class="tab-btn" id="tab-papdiView" onclick="switchView('papdiView')">Papdi No Lot</button>
+    <button class="tab-btn" id="tab-mohanthalView" onclick="switchView('mohanthalView')">Mohanthal</button>
+</div>
 
-    <div class="ingredients">
-        <div><strong>Wheat Flour:</strong> <span id="wheat"></span></div>
-        <div><strong>Chana Flour:</strong> <span id="chana"></span></div>
-        <div><strong>Jaggery:</strong> <span id="jaggery"></span></div>
-        <div><strong>Ghee:</strong> <span id="ghee"></span></div>
+<div id="wrapperCard" class="hub-container">
+
+    <!-- MAIN MENU VIEW -->
+    <div id="menuView" class="view active">
+        <img src="logo.jpg" alt="Murti's Kitchen" class="logo-banner">
+        <button class="menu-btn ladoo-btn" onclick="switchView('ladooView')">Ladoo Calculator</button>
+        <button class="menu-btn papdi-btn" onclick="switchView('papdiView')">Papdi No Lot Calculator</button>
+        <button class="menu-btn mohanthal-btn" onclick="switchView('mohanthalView')">Mohanthal Calculator</button>
     </div>
+
+    <!-- LADOO CALCULATOR VIEW -->
+    <div id="ladooView" class="view">
+        <h2 class="ladoo-title">Ladoo Calculator</h2>
+        <input type="number" id="ladooCount" value="1" min="1" oninput="updateLadooRecipe()">
+        
+        <div class="ingredients">
+            <div class="ing-item"><span>Wheat Flour:</span> <span class="val" id="wheat">---</span><span class="unit">g</span></div>
+            <div class="ing-item"><span>Chana Flour:</span> <span class="val" id="chana">---</span><span class="unit">g</span></div>
+            <div class="ing-item"><span>Jaggery:</span> <span class="val" id="jaggery">---</span><span class="unit">g</span></div>
+            <div class="ing-item"><span>Ghee:</span> <span class="val" id="ghee">---</span><span class="unit">g</span></div>
+        </div>
+    </div>
+
+    <!-- PAPDI NO LOT CALCULATOR VIEW -->
+    <div id="papdiView" class="view">
+        <h2 class="papdi-title">Papdi No Lot Calculator</h2>
+        <input type="number" id="lotWeight" value="12.25" min="0.1" step="0.01" oninput="updatePapdiRecipe()">
+        
+        <div class="ingredients">
+            <div class="ing-item"><span>Flour:</span> <span class="val" id="papdiFlour">---</span><span class="unit">kg</span></div>
+            <div class="ing-item"><span>Sabudana:</span> <span class="val" id="papdiSabudana">---</span><span class="unit">g</span></div>
+            <div class="ing-item"><span>Jeeru:</span> <span class="val" id="papdiJeeru">---</span><span class="unit">g</span></div>
+            <div class="ing-item"><span>Aajmo:</span> <span class="val" id="papdiAajmo">---</span><span class="unit">g</span></div>
+            <div class="ing-item"><span>Salt:</span> <span class="val" id="papdiSalt">---</span><span class="unit">g</span></div>
+            <div class="ing-item"><span>Kharo:</span> <span class="val" id="papdiKharo">---</span><span class="unit">g</span></div>
+        </div>
+    </div>
+
+    <!-- MOHANTHAL CALCULATOR VIEW -->
+    <div id="mohanthalView" class="view">
+        <h2 class="mohanthal-title">Mohanthal Calculator</h2>
+        <input type="number" id="targetLb" value="3.8" min="0.1" step="0.1" oninput="updateMohanthalRecipe()">
+        
+        <div class="ingredients">
+            <div class="section-header">Ingredients</div>
+            <div class="ing-item"><span>Flour:</span> <span class="val" id="mohFlour">---</span><span class="unit">kg</span></div>
+            <div class="ing-item"><span>Sugar:</span> <span class="val" id="mohSugar">---</span><span class="unit">g</span></div>
+            <div class="ing-item"><span>Ghee:</span> <span class="val" id="mohGhee">---</span><span class="unit">g</span></div>
+            <div class="ing-item"><span>Milk Powder:</span> <span class="val" id="mohMilkPowder">---</span><span class="unit">g</span></div>
+            
+            <div class="section-header">Dhabo</div>
+            <div class="ing-item"><span>Ghee:</span> <span class="val" id="mohDhaboGhee">---</span><span class="unit">g</span></div>
+            <div class="ing-item"><span>Milk:</span> <span class="val" id="mohDhaboMilk">---</span><span class="unit">g</span></div>
+        </div>
+    </div>
+
 </div>
 
 <script>
-// Exact math for 1 single ladoo (Grams / 528)
-const basePerLadoo = {
-    wheatFlour: 9000 / 528,
-    chanaFlour: 3000 / 528,
-    jaggery: 6400 / 528,
-    ghee: 4000 / 528
-};
+    const container = document.getElementById('wrapperCard');
 
-function formatWeight(totalGrams) {
-    if (totalGrams >= 1000) {
-        let kg = Math.floor(totalGrams / 1000);
-        let g = Math.round(totalGrams % 1000);
-        return `${kg}kg ${g}g`;
-    } else {
-        return `${Math.round(totalGrams)}g`;
+    function switchView(viewId) {
+        // Toggle Active View
+        document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
+        document.getElementById(viewId).classList.add('active');
+        
+        // Toggle Active Navigation Tab
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('tab-' + viewId).classList.add('active');
+        
+        // Dynamic background swapping per page view
+        if (viewId === 'menuView') {
+            document.body.style.backgroundImage = "none";
+            document.body.style.backgroundColor = "#1a1a1a";
+            container.classList.remove('calc-mode');
+        } else if (viewId === 'ladooView') {
+            document.body.style.backgroundImage = "url('ladoo.jpg')";
+            container.classList.add('calc-mode');
+            updateLadooRecipe();
+        } else if (viewId === 'papdiView') {
+            document.body.style.backgroundImage = "url('papdi.jpg')";
+            container.classList.add('calc-mode');
+            updatePapdiRecipe();
+        } else if (viewId === 'mohanthalView') {
+            document.body.style.backgroundImage = "url('mohanthal.jpg')";
+            container.classList.add('calc-mode');
+            updateMohanthalRecipe();
+        }
     }
-}
 
-function updateRecipe() {
-    // Get the number the user typed in
-    let count = parseFloat(document.getElementById('ladooCount').value) || 0;
+    // Ladoo Calculation Logic
+    const basePerLadoo = {
+        wheatFlour: 9000 / 528,
+        chanaFlour: 3000 / 528,
+        jaggery: 9000 / 528,
+        ghee: 7000 / 528
+    };
 
-    // Calculate and update the UI instantly
-    document.getElementById('wheat').innerText = formatWeight(basePerLadoo.wheatFlour * count);
-    document.getElementById('chana').innerText = formatWeight(basePerLadoo.chanaFlour * count);
-    document.getElementById('jaggery').innerText = formatWeight(basePerLadoo.jaggery * count);
-    document.getElementById('ghee').innerText = formatWeight(basePerLadoo.ghee * count);
-}
+    function updateLadooRecipe() {
+        const count = parseFloat(document.getElementById('ladooCount').value) || 0;
+        document.getElementById('wheat').innerText = (basePerLadoo.wheatFlour * count).toFixed(1);
+        document.getElementById('chana').innerText = (basePerLadoo.chanaFlour * count).toFixed(1);
+        document.getElementById('jaggery').innerText = (basePerLadoo.jaggery * count).toFixed(1);
+        document.getElementById('ghee').innerText = (basePerLadoo.ghee * count).toFixed(1);
+    }
 
-// Run once on load to show measurements for 1 ladoo initially
-updateRecipe();
+    // Papdi Calculation Logic
+    const basePapdiBatch = {
+        lotSize: 12.25,
+        flour: 3.5,
+        sabudana: 175,
+        jeeru: 30,
+        aajmo: 20,
+        salt: 150,
+        kharo: 150
+    };
+
+    function updatePapdiRecipe() {
+        const targetWeight = parseFloat(document.getElementById('lotWeight').value) || 0;
+        const scale = targetWeight / basePapdiBatch.lotSize;
+
+        document.getElementById('papdiFlour').innerText = (basePapdiBatch.flour * scale).toFixed(2);
+        document.getElementById('papdiSabudana').innerText = (basePapdiBatch.sabudana * scale).toFixed(1);
+        document.getElementById('papdiJeeru').innerText = (basePapdiBatch.jeeru * scale).toFixed(1);
+        document.getElementById('papdiAajmo').innerText = (basePapdiBatch.aajmo * scale).toFixed(1);
+        document.getElementById('papdiSalt').innerText = (basePapdiBatch.salt * scale).toFixed(1);
+        document.getElementById('papdiKharo').innerText = (basePapdiBatch.kharo * scale).toFixed(1);
+    }
+
+    // Mohanthal Calculation Logic (Base batch output target: 3.8 LB)
+    const baseMohanthalBatch = {
+        resultLb: 3.8,
+        flour: 1.0,        // kg
+        sugar: 900,        // g
+        ghee: 750,         // g
+        milkPowder: 100,   // g
+        dhaboGhee: 150,    // g
+        dhaboMilk: 150     // g
+    };
+
+    function updateMohanthalRecipe() {
+        const targetLb = parseFloat(document.getElementById('targetLb').value) || 0;
+        const scale = targetLb / baseMohanthalBatch.resultLb;
+
+        document.getElementById('mohFlour').innerText = (baseMohanthalBatch.flour * scale).toFixed(2);
+        document.getElementById('mohSugar').innerText = (baseMohanthalBatch.sugar * scale).toFixed(1);
+        document.getElementById('mohGhee').innerText = (baseMohanthalBatch.ghee * scale).toFixed(1);
+        document.getElementById('mohMilkPowder').innerText = (baseMohanthalBatch.milkPowder * scale).toFixed(1);
+        document.getElementById('mohDhaboGhee').innerText = (baseMohanthalBatch.dhaboGhee * scale).toFixed(1);
+        document.getElementById('mohDhaboMilk').innerText = (baseMohanthalBatch.dhaboMilk * scale).toFixed(1);
+    }
+
+    // Initial setup
+    switchView('menuView');
 </script>
 
 </body>
